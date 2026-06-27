@@ -1,98 +1,199 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { useTheme } from '@/constants/ThemeProvider';
+import { StatusBar } from '@/components/ui/home/StatusBar';
+import { OfflineBanner } from '@/components/ui/home/OfflineBanner';
+import { StateManager } from '@/components/ui/home/StateManager';
+import { Header } from '@/components/ui/home/Header';
+import { HeroWeatherCard } from '@/components/ui/home/HeroWeatherCard';
+import { MetricCard } from '@/components/ui/home/MetricCard';
+import { HourlyStrip } from '@/components/ui/home/HourlyStrip';
+import { DataSourceCard } from '@/components/ui/home/DataSourceCard';
+import { TabBar } from '@/components/ui/home/TabBar';
+import { HomeIndicator } from '@/components/ui/home/HomeIndicator';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+interface CurrentWeatherScreenProps {
+    /** Simulated latency for loading state (dev) */
+    latency?: number;
+    /** Force error state (dev) */
+    forceFail?: boolean;
+    /** Simulated offline state */
+    offline?: boolean;
+    onNavigate?: (screen: string) => void;
+}
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+const HOURLY_DATA = [
+    { time: 'Ahora', condition: 'sunny' as const, temp: '92°', precip: '59%' },
+    { time: '13:00', condition: 'sunny' as const, temp: '89°', precip: '13%' },
+    { time: '14:00', condition: 'sunny' as const, temp: '90°', precip: '24%' },
+    { time: '15:00', condition: 'rainy' as const, temp: '90°', precip: '49%' },
+    { time: '16:00', condition: 'rainy' as const, temp: '91°', precip: '59%' },
+    { time: '17:00', condition: 'rainy' as const, temp: '88°', precip: '58%' },
+    { time: '18:00', condition: 'rainy' as const, temp: '87°', precip: '62%' },
+    { time: '19:00', condition: 'partly-cloudy' as const, temp: '84°', precip: '59%' },
+    { time: '20:00', condition: 'partly-cloudy' as const, temp: '82°', precip: '54%' },
+    { time: '21:00', condition: 'cloudy' as const, temp: '78°', precip: '51%' },
+];
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+export default function CurrentWeatherScreen({
+    latency,
+    forceFail,
+    offline = false,
+    onNavigate,
+}: CurrentWeatherScreenProps) {
+    const { theme, isDark, toggleDark } = useTheme();
+    const [activeTab, setActiveTab] = useState('weather');
+
+    const handleTabPress = useCallback(
+        (key: string) => {
+            setActiveTab(key);
+            onNavigate?.(key);
+        },
+        [onNavigate],
+    );
+
+    const handleSearch = useCallback(() => {
+        onNavigate?.('search');
+    }, [onNavigate]);
+
+    const handleHourlySeeAll = useCallback(() => {
+        onNavigate?.('hours');
+    }, [onNavigate]);
+
+    const handleDetailSeeAll = useCallback(() => {
+        onNavigate?.('detail');
+    }, [onNavigate]);
+
+    return (
+        <View style={[styles.screen, { backgroundColor: theme.colors.bg }]}>
+            {/* <StatusBar /> */}
+            <OfflineBanner visible={offline} />
+            <View style={styles.content}>
+                <StateManager
+                    latency={latency}
+                    forceFail={forceFail}
+                    renderContent={() => (
+                        <ScrollView
+                            showsVerticalScrollIndicator={false}
+                            contentContainerStyle={styles.scroll}
+                        >
+                            <Header
+                                greeting="viernes · 26 de junio"
+                                title="Washington, DC"
+                                isDark={isDark}
+                                onToggleDark={toggleDark}
+                                onSearch={handleSearch}
+                            />
+
+                            <View style={styles.section}>
+                                <HeroWeatherCard
+                                    temperature={92}
+                                    unit="F"
+                                    condition="Chubascos y tormentas aisladas"
+                                    conditionIcon="sunny"
+                                    feelsLike={96}
+                                    precipitation={59}
+                                    windSpeed="6 mph"
+                                    windDir="O"
+                                    humidity={45}
+                                    lastObs="12:00 PM"
+                                />
+                            </View>
+
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
+                                    <View style={{ flex: 1 }}>
+                                        <HeaderTitle title="Más detalles" />
+                                    </View>
+                                    <HeaderLink label="Ver todo →" onPress={handleDetailSeeAll} />
+                                </View>
+                                <View style={styles.metricGrid}>
+                                    <View style={styles.metricCol}>
+                                        <MetricCard
+                                            label="Precipitación"
+                                            value="59%"
+                                            sub="Posibilidad de lluvia"
+                                            barValue={59}
+                                        />
+                                        <View style={{ height: 10 }} />
+                                        <MetricCard
+                                            label="Viento"
+                                            value="6 mph"
+                                            sub="Dirección: Oeste"
+                                        />
+                                    </View>
+                                    <View style={styles.metricCol}>
+                                        <MetricCard
+                                            label="Humedad"
+                                            value="45%"
+                                            sub="Punto de rocío: 66°F"
+                                            barValue={45}
+                                        />
+                                        <View style={{ height: 10 }} />
+                                        <MetricCard
+                                            label="Índice UV"
+                                            value="8"
+                                            sub="Muy alto"
+                                        />
+                                    </View>
+                                </View>
+                            </View>
+
+                            <HourlyStrip data={HOURLY_DATA} onSeeAll={handleHourlySeeAll} />
+
+                            <DataSourceCard
+                                station="Washington/Reagan National Airport (KDCA)"
+                                updated="26 jun 2026 12:30 PM EDT"
+                                source="weather.gov"
+                            />
+
+                            <View style={{ height: 20 }} />
+                        </ScrollView>
+                    )}
+                    errorTitle="Error de conexión"
+                    errorDescription="No pudimos obtener los datos del clima. Verifica tu conexión a internet e intenta de nuevo."
+                />
+            </View>
+            {/*<TabBar activeTab={activeTab} onTabPress={handleTabPress} />*/}
+                {/*< HomeIndicator />*/}
+        </View>
+    );
+}
+
+function HeaderTitle({ title }: { title: string }) {
+    const { theme } = useTheme();
+    return (
+        <Text style={{ color: theme.colors.fg, fontSize: 16, fontWeight: '600' }}>
+            {title}
+        </Text>
+    );
+}
+
+function HeaderLink({ label, onPress }: { label: string; onPress?: () => void }) {
+    const { theme } = useTheme();
+    return (
+        <TouchableOpacity onPress={onPress} accessibilityRole="button">
+            <Text style={{ color: theme.colors.accent, fontSize: 13, fontWeight: '500' }}>{label}</Text>
+        </TouchableOpacity>
+    );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+    screen: { flex: 1 },
+    content: { flex: 1, overflow: 'hidden' },
+    scroll: { paddingBottom: 28 },
+    section: { marginTop: 8, paddingHorizontal: 20 },
+    sectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    metricGrid: {
+        flexDirection: 'row',
+        gap: 10,
+    },
+    metricCol: {
+        flex: 1,
+    },
 });
