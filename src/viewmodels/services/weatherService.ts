@@ -20,7 +20,7 @@ import { ObservationsApi } from '../../api/endpoints/observations';
 import { AlertsApi } from '../../api/endpoints/alerts';
 import { httpClient } from '../../api/client/httpClient';
 
-import type { Point } from '../../api/types/models';
+import type { Point, PointGeoJson } from '../../api/types/models';
 import type {
   Gridpoint12hForecast,
   GridpointHourlyForecast,
@@ -29,6 +29,7 @@ import type {
   ObservationStation,
   AlertCollectionGeoJson,
 } from '../../api/types/models';
+import { p } from '@/src/constants/debug';
 
 // =========================================================================
 // Resolved location — the result of /points lookup + nearest station
@@ -48,7 +49,7 @@ export interface ResolvedLocation {
 // =========================================================================
 
 export interface CurrentWeatherBundle {
-  location: ResolvedLocation;
+  location: PointGeoJson;
   forecast12h: Gridpoint12hForecast;
   forecastHourly: GridpointHourlyForecast;
   latestObservation: Observation | null;
@@ -56,14 +57,14 @@ export interface CurrentWeatherBundle {
 }
 
 export interface DetailWeatherBundle {
-  location: ResolvedLocation;
+  location: PointGeoJson;
   gridData: Gridpoint;
   latestObservation: Observation | null;
   activeAlerts: AlertCollectionGeoJson | null;
 }
 
 export interface HourlyForecastBundle {
-  location: ResolvedLocation;
+  location: PointGeoJson;
   forecastHourly: GridpointHourlyForecast;
 }
 
@@ -98,13 +99,13 @@ export class WeatherService {
    *   // loc.point.gridId → "TOP"
    *   // loc.nearestStationId → "KTOP"
    */
-  async resolveLocation(lat: number, lon: number): Promise<ResolvedLocation> {
+  async resolveLocation(lat: number, lon: number): Promise<PointGeoJson> {
     const pointGeo = await this.pointsApi.getPoint(lat, lon);
-    const point = pointGeo.properties;
 
     // Fetch the nearest station from the /points/{lat},{lon}/stations endpoint
     // The observationStations URI returns a FeatureCollection sorted by distance.
-    const stationsGeo = await this.observationsApi.listStations({
+    
+    /*const stationsGeo = await this.observationsApi.listStations({
       center: { latitude: lat, longitude: lon, radius: 50 },
       limit: 1,
     });
@@ -113,12 +114,9 @@ export class WeatherService {
     if (!nearestStation) {
       throw new Error(`No observation station found near ${lat}, ${lon}`);
     }
+    */
 
-    return {
-      point,
-      nearestStationId: nearestStation.stationIdentifier,
-      nearestStation,
-    };
+    return pointGeo;
   }
 
   /**
@@ -141,26 +139,29 @@ export class WeatherService {
     units: 'us' | 'si' = 'us',
   ): Promise<CurrentWeatherBundle> {
     const location = await this.resolveLocation(lat, lon);
-    const { gridId, gridX, gridY } = location.point;
+    const { gridId, gridX, gridY } = location.properties;
 
     // Run independent requests in parallel for performance.
-    const [forecast12h, forecastHourly, latestObs, activeAlerts] =
+    //  const [forecast12h, forecastHourly, latestObs, activeAlerts] =
+    const [forecast12h, forecastHourly,  activeAlerts] =
       await Promise.all([
         this.gridpointsApi.getForecast(gridId, gridX, gridY, units),
         this.gridpointsApi.getHourlyForecast(gridId, gridX, gridY, units),
-        this.observationsApi
-          .getLatestObservation(location.nearestStationId)
-          .catch(() => null), // observation can be null if station is down
+        
+        //this.observationsApi
+        //  .getLatestObservation(location.nearestStationId)
+        //  .catch(() => null), // observation can be null if station is down
         this.alertsApi
           .getActiveAlerts({ point: { latitude: lat, longitude: lon }, limit: 5 })
           .catch(() => null), // alerts are optional
       ]);
 
+    p(forecast12h)
     return {
-      location,
+     location,
       forecast12h: forecast12h.properties,
       forecastHourly: forecastHourly.properties,
-      latestObservation: latestObs?.properties ?? null,
+     latestObservation: null, 
       activeAlerts,
     };
   }
@@ -183,13 +184,13 @@ export class WeatherService {
     lon: number,
   ): Promise<DetailWeatherBundle> {
     const location = await this.resolveLocation(lat, lon);
-    const { gridId, gridX, gridY } = location.point;
+    const { gridId, gridX, gridY } = location.properties;
 
-    const [gridData, latestObs, activeAlerts] = await Promise.all([
+    const [gridData, activeAlerts] = await Promise.all([
       this.gridpointsApi.getGridData(gridId, gridX, gridY),
-      this.observationsApi
-        .getLatestObservation(location.nearestStationId)
-        .catch(() => null),
+     // this.observationsApi
+     ///   .getLatestObservation(location.nearestStationId)
+     //   .catch(() => null),
       this.alertsApi
         .getActiveAlerts({ point: { latitude: lat, longitude: lon }, limit: 5 })
         .catch(() => null),
@@ -198,7 +199,7 @@ export class WeatherService {
     return {
       location,
       gridData: gridData.properties,
-      latestObservation: latestObs?.properties ?? null,
+      latestObservation:  null,
       activeAlerts,
     };
   }
@@ -220,7 +221,7 @@ export class WeatherService {
     units: 'us' | 'si' = 'us',
   ): Promise<HourlyForecastBundle> {
     const location = await this.resolveLocation(lat, lon);
-    const { gridId, gridX, gridY } = location.point;
+    const { gridId, gridX, gridY } = location.properties;
 
     const forecastHourly = await this.gridpointsApi.getHourlyForecast(
       gridId,

@@ -24,6 +24,9 @@ import axios, {
 } from 'axios';
 import type { ProblemDetail } from '../types/models';
 
+import curlirize from 'axios-curlirize'
+
+
 // ---------------------------------------------------------------------------
 // Configuration constants
 // ---------------------------------------------------------------------------
@@ -36,7 +39,7 @@ const BASE_URL = 'https://api.weather.gov';
  * Replace with your own app name and contact info so NWS can reach you
  * if your traffic is associated with a security event.
  */
-const DEFAULT_USER_AGENT = '(american_weather, contact@myweatherapp.com)';
+const DEFAULT_USER_AGENT = '(american_weather, gloera.adeve@gmail.com)';
 
 /**
  * Feature flags requested via HTTP headers.
@@ -91,6 +94,8 @@ export class WeatherApiError extends Error {
 // Client factory
 // ---------------------------------------------------------------------------
 
+
+
 /**
  * Creates and returns a configured Axios instance for the weather.gov API.
  *
@@ -142,6 +147,7 @@ export function createHttpClient(
     },
   );
 
+  curlirize(client)
   return client;
 }
 

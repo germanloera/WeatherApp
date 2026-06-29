@@ -28,6 +28,7 @@
 // ---------------------------------------------------------------------------
 
 import type { AxiosInstance } from 'axios';
+
 import type {
   ObservationGeoJson,
   ObservationCollectionGeoJson,
@@ -35,6 +36,7 @@ import type {
   ObservationStationCollectionGeoJson,
 } from '../types/models';
 
+import { p } from '@/src/constants/debug';
 /**
  * Filters for the /stations endpoint.
  */
@@ -112,6 +114,8 @@ export class ObservationsApi {
       '/stations',
       { params },
     );
+    
+    p(data)
     return data;
   }
 

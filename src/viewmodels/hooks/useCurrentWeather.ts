@@ -32,8 +32,10 @@ import type {
   Gridpoint12hForecast,
   GridpointHourlyForecast,
   Observation,
+  PointGeoJson,
   TemperatureUnit,
 } from '../../api/types';
+import { p } from '@/src/constants/debug';
 
 // =========================================================================
 // View-model return type
@@ -191,11 +193,11 @@ function buildHourlyStrip(
  * Build the DataSourceCard props.
  */
 function buildDataSource(
-  location: ResolvedLocation,
+  location: PointGeoJson,
   forecast: Gridpoint12hForecast,
 ): DataSourceData {
   return {
-    station: `${location.nearestStation.name} (${location.nearestStationId})`,
+    station: "",
     updated: new Date(forecast.updateTime).toLocaleString('en-US', {
       day: '2-digit',
       month: 'short',
@@ -235,7 +237,9 @@ export function useCurrentWeather(
 
       try {
         const bundle = await weatherService.getCurrentWeather(lat, lon, unit);
-        console.log(bundle)
+       
+        
+          p(bundle)
 
         // Guard against stale responses from rapid re-fetches.
         if (id !== fetchIdRef.current) return;
@@ -248,7 +252,7 @@ export function useCurrentWeather(
         const screenData: HomeScreenData = {
           header: {
             greeting: formatGreeting(bundle.forecast12h.generatedAt),
-            title: `${bundle.location.point.relativeLocation.city}, ${bundle.location.point.relativeLocation.state}`,
+            title: `${bundle.location.properties.relativeLocation.city}, ${bundle.location.properties.relativeLocation.state}`,
           },
           hero: buildHeroData(currentPeriod, bundle.latestObservation, unit === 'us' ? 'F' : 'C'),
           metrics: buildMetrics(currentPeriod, bundle.latestObservation),
@@ -262,6 +266,7 @@ export function useCurrentWeather(
         const message =
           err instanceof Error ? err.message : 'Failed to fetch weather data';
         setError(message);
+        p(err)
       } finally {
         if (id === fetchIdRef.current) {
           setIsLoading(false);

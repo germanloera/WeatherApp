@@ -20,6 +20,7 @@
 import type { AxiosInstance } from 'axios';
 import type { PointGeoJson } from '../types/models';
 
+
 export class PointsApi {
   constructor(private readonly client: AxiosInstance) {}
 
