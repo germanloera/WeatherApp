@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTheme } from '@/constants/ThemeProvider';
-import { StatusBar } from '@/components/ui/home/StatusBar';
 import { OfflineBanner } from '@/components/ui/home/OfflineBanner';
 import { StateManager } from '@/components/ui/home/StateManager';
 import { Header } from '@/components/ui/home/Header';
@@ -9,8 +8,8 @@ import { HeroWeatherCard } from '@/components/ui/home/HeroWeatherCard';
 import { MetricCard } from '@/components/ui/home/MetricCard';
 import { HourlyStrip } from '@/components/ui/home/HourlyStrip';
 import { DataSourceCard } from '@/components/ui/home/DataSourceCard';
-import { TabBar } from '@/components/ui/home/TabBar';
-import { HomeIndicator } from '@/components/ui/home/HomeIndicator';
+import { useCurrentWeather } from '@/src';
+
 
 interface CurrentWeatherScreenProps {
     /** Simulated latency for loading state (dev) */
@@ -43,6 +42,11 @@ export default function CurrentWeatherScreen({
 }: CurrentWeatherScreenProps) {
     const { theme, isDark, toggleDark } = useTheme();
     const [activeTab, setActiveTab] = useState('weather');
+
+    const { data, isLoading, error, refresh, isRefreshing } = useCurrentWeather(42.324268, -83.399017, "si")
+
+
+
 
     const handleTabPress = useCallback(
         (key: string) => {

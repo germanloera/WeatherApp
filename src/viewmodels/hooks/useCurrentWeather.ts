@@ -32,7 +32,8 @@ import type {
   Gridpoint12hForecast,
   GridpointHourlyForecast,
   Observation,
-} from '../api/types/models';
+  TemperatureUnit,
+} from '../../api/types';
 
 // =========================================================================
 // View-model return type
@@ -106,7 +107,7 @@ function formatGreeting(iso?: string): string {
 function buildHeroData(
   period: Gridpoint12hForecast['periods'][0],
   obs: Observation | null,
-  unit: string,
+  unit: TemperatureUnit,
 ): HeroWeatherData {
   const tempVal = typeof period.temperature === 'object'
     ? (period.temperature as { value: number | null }).value ?? 0
@@ -234,6 +235,7 @@ export function useCurrentWeather(
 
       try {
         const bundle = await weatherService.getCurrentWeather(lat, lon, unit);
+        console.log(bundle)
 
         // Guard against stale responses from rapid re-fetches.
         if (id !== fetchIdRef.current) return;

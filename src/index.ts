@@ -19,10 +19,11 @@
 // Migration guide → see AGENTS.md or CLAUDE.md
 // ---------------------------------------------------------------------------
 
-export { createHttpClient, httpClient, WeatherApiError } from './api/client/httpClient';
+
+export { createHttpClient, httpClient, WeatherApiError } from '@/src/api/client/httpClient';
 export type { AxiosInstance } from 'axios';
 
-export { PointsApi, GridpointsApi, ObservationsApi, AlertsApi, ZonesApi } from './api/endpoints';
+export { PointsApi, GridpointsApi, ObservationsApi, AlertsApi, ZonesApi, } from '@/src/api/endpoints';
 
 export type * from './api/types';
 

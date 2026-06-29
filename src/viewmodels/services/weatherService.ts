@@ -14,13 +14,13 @@
 //   const result = await svc.getCurrentWeather(39.74, -97.08);
 // ---------------------------------------------------------------------------
 
-import { PointsApi } from '../api/endpoints/points';
-import { GridpointsApi } from '../api/endpoints/gridpoints';
-import { ObservationsApi } from '../api/endpoints/observations';
-import { AlertsApi } from '../api/endpoints/alerts';
-import { httpClient } from '../api/client/httpClient';
+import { PointsApi } from '../../api/endpoints/points';
+import { GridpointsApi } from '../../api/endpoints/gridpoints';
+import { ObservationsApi } from '../../api/endpoints/observations';
+import { AlertsApi } from '../../api/endpoints/alerts';
+import { httpClient } from '../../api/client/httpClient';
 
-import type { Point } from '../api/types/models';
+import type { Point } from '../../api/types/models';
 import type {
   Gridpoint12hForecast,
   GridpointHourlyForecast,
@@ -28,7 +28,7 @@ import type {
   Observation,
   ObservationStation,
   AlertCollectionGeoJson,
-} from '../api/types/models';
+} from '../../api/types/models';
 
 // =========================================================================
 // Resolved location — the result of /points lookup + nearest station

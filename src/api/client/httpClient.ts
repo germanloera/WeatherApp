@@ -36,7 +36,7 @@ const BASE_URL = 'https://api.weather.gov';
  * Replace with your own app name and contact info so NWS can reach you
  * if your traffic is associated with a security event.
  */
-const DEFAULT_USER_AGENT = '(myweatherapp.com, contact@myweatherapp.com)';
+const DEFAULT_USER_AGENT = '(american_weather, contact@myweatherapp.com)';
 
 /**
  * Feature flags requested via HTTP headers.
