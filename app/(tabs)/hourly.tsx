@@ -1,16 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
-import { useTheme } from '../../ThemeProvider';
-import { StatusBar } from '../StatusBar';
-import { OfflineBanner } from '../OfflineBanner';
-import { StateManager } from '../StateManager';
-import { Header } from '../Header';
-import { DataSourceCard } from '../DataSourceCard';
-import { TabBar } from '../TabBar';
-import { HomeIndicator } from '../HomeIndicator';
-import { DayDivider } from './DayDivider';
-import { HourRow } from './HourRow';
-import type { WeatherCondition } from '../WeatherIcon';
+import { useTheme } from '@/constants/ThemeProvider';
+import { OfflineBanner } from '@/components/ui/home/OfflineBanner';
+import { StateManager } from '@/components/ui/home/StateManager';
+import { Header } from '@/components/ui/home/Header';
+import { DataSourceCard } from '@/components/ui/home/DataSourceCard';
+import { DayDivider } from '@/components/ui/hourly/DayDivider';
+import { HourRow } from '@/components/ui/hourly/HourRow';
+import type { WeatherCondition } from '@/components/ui/home/WeatherIcon';
 
 interface HourData {
   time: string;
@@ -70,7 +67,8 @@ const DAYS: DayGroup[] = [
   },
 ];
 
-export function HourlyScreen({
+
+export default function HourlyScreen({
   latency,
   forceFail,
   offline = false,
@@ -93,7 +91,7 @@ export function HourlyScreen({
 
   return (
     <View style={[styles.screen, { backgroundColor: theme.colors.bg }]}>
-      <StatusBar />
+    
       <OfflineBanner visible={offline} />
       <View style={styles.content}>
         <StateManager
@@ -136,8 +134,6 @@ export function HourlyScreen({
           errorDescription="No pudimos obtener los datos del clima. Verifica tu conexión a internet e intenta de nuevo."
         />
       </View>
-      <TabBar activeTab={activeTab} onTabPress={handleTabPress} />
-      <HomeIndicator />
     </View>
   );
 }
