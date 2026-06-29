@@ -99,7 +99,7 @@ export default function SearchScreen({ onNavigate, offline = false }: SearchScre
   );
 
   const renderContent = () => (
-    <View style={styles.flex}>
+    <View style={[styles.flex, { backgroundColor: theme.colors.bg }]}>
       <Header
         greeting="Encuentra tu ciudad"
         title="Buscar ubicación"
@@ -160,7 +160,7 @@ export default function SearchScreen({ onNavigate, offline = false }: SearchScre
 
 
 const styles = StyleSheet.create({
-  flex: { flex: 1 },
+  flex: { flex: 1, },
   scroll: { paddingBottom: 28 },
   section: { paddingHorizontal: 20, gap: 12, paddingTop: 4 },
   sectionTitle: {
