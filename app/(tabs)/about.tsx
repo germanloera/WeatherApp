@@ -14,7 +14,7 @@ export default function AboutScreen({ onNavigate, isDark, onToggleDark }: AboutS
   const { theme } = useTheme();
 
   return (
-    <View>
+    <View style={styles.content} >
       
 
       <View style={[styles.content, { backgroundColor: theme.colors.bg }]}>

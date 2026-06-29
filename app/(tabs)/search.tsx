@@ -146,7 +146,7 @@ export default function SearchScreen({ onNavigate, offline = false }: SearchScre
 
   return (
 
-     <View>
+    <View style={ styles.flex }>
       <OfflineBanner visible={offline} />
       <StateManager
         latency={1000}
