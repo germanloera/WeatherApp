@@ -273,7 +273,7 @@ export const lightTheme: AppTheme = {
 
 export const darkTheme: AppTheme = {
   dark: true,
-  colors: palette.dark,
+  colors:  palette.dark,
   fonts,
   fontSizes,
   lineHeights,
