@@ -1,0 +1,24 @@
+info:
+  name: Points
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: https://api.weather.gov/points/42.3243,-83.3990
+  headers:
+    - name: Accept
+      value: application/geo+json
+    - name: Content-Type
+      value: undefined
+    - name: User-Agent
+      value: (american_weather, gloera.adeve@gmail.com)
+    - name: Feature-Flags
+      value: forecast_temperature_qv,forecast_wind_speed_qv
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

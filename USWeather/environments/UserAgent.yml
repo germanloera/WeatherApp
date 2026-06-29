@@ -1,0 +1,4 @@
+name: UserAgent
+variables:
+  - name: userAgent
+    value: (american_weather, gloera.adeve@gmail.com)

@@ -152,7 +152,7 @@ export class WeatherService {
         //  .getLatestObservation(location.nearestStationId)
         //  .catch(() => null), // observation can be null if station is down
         this.alertsApi
-          .getActiveAlerts({ point: { latitude: lat, longitude: lon }, limit: 5 })
+          .getActiveAlerts({ point: { latitude: lat, longitude: lon } })
           .catch(() => null), // alerts are optional
       ]);
 
