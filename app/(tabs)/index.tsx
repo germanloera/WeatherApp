@@ -41,20 +41,8 @@ export default function CurrentWeatherScreen({
     onNavigate,
 }: CurrentWeatherScreenProps) {
     const { theme, isDark, toggleDark } = useTheme();
-    const [activeTab, setActiveTab] = useState('weather');
-
     const { data, isLoading, failed,  error, refresh, isRefreshing } = useCurrentWeather(42.324268, -83.399017, "si")
 
-
-
-
-    const handleTabPress = useCallback(
-        (key: string) => {
-            setActiveTab(key);
-            onNavigate?.(key);
-        },
-        [onNavigate],
-    );
 
     const handleSearch = useCallback(() => {
         onNavigate?.('search');

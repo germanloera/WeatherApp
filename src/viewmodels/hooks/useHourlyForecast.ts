@@ -216,3 +216,4 @@ export function useHourlyForecast(
 
   return { data, isLoading, error, refresh, isRefreshing };
 }
+
