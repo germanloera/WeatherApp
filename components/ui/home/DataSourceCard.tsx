@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/constants/ThemeProvider';
 
 interface DataSourceCardProps {
-  station: string;
+  station?: string;
   updated: string;
   source: string;
 }
@@ -12,9 +12,10 @@ export function DataSourceCard({ station, updated, source }: DataSourceCardProps
   const { theme } = useTheme();
   return (
     <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-      <Text style={[styles.meta, { color: theme.colors.muted }]}>
+      {station && <Text style={[styles.meta, { color: theme.colors.muted }]}>
         Datos de: <Text style={{ fontWeight: '500', color: theme.colors.fg }}>{station}</Text>
       </Text>
+      }
       <Text style={[styles.updated, { color: theme.colors.muted }]}>
         Actualizado: {updated} · {source}
       </Text>

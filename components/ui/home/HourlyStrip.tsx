@@ -12,7 +12,7 @@ interface HourData {
 }
 
 interface HourlyStripProps {
-  data: HourData[];
+  data?: HourData[];
   onSeeAll?: () => void;
 }
 
@@ -34,7 +34,7 @@ export function HourlyStrip({ data, onSeeAll }: HourlyStripProps) {
         contentContainerStyle={styles.scroll}
         decelerationRate="fast"
       >
-        {data.map((item, i) => (
+        {data && data.map((item, i) => (
           <HourlyItem key={i} {...item} />
         ))}
       </ScrollView>

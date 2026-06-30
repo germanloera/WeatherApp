@@ -136,12 +136,12 @@ export default function CurrentWeatherScreen({
                                 </View>
                             </View>
 
-                            <HourlyStrip data={HOURLY_DATA} onSeeAll={handleHourlySeeAll} />
+                            <HourlyStrip data={data?.hourly} onSeeAll={handleHourlySeeAll} />
 
                             <DataSourceCard
-                                station="Washington/Reagan National Airport (KDCA)"
-                                updated="26 jun 2026 12:30 PM EDT"
-                                source="weather.gov"
+                                station={data?.dataSource.station }
+                                updated={data?.dataSource.updated ?? ""}
+                                source={ data?.dataSource.source ?? ""}
                             />
 
                             <View style={{ height: 20 }} />
