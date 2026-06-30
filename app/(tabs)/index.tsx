@@ -91,16 +91,16 @@ export default function CurrentWeatherScreen({
 
                             <View style={styles.section}>
                                 <HeroWeatherCard
-                                    temperature={92}
-                                    unit="F"
-                                    condition="Chubascos y tormentas aisladas"
+                                    temperature={data?.hero.temperature ?? -1}
+                                    unit={data?.hero.unit ?? ""}
+                                    condition={data?.hero.condition ?? ""}
                                     conditionIcon="sunny"
-                                    feelsLike={96}
-                                    precipitation={59}
-                                    windSpeed="6 mph"
-                                    windDir="O"
-                                    humidity={45}
-                                    lastObs="12:00 PM"
+                                    feelsLike={data?.hero.feelsLike ?? -1}
+                                    precipitation={data?.hero.precipitation ?? -1}
+                                    windSpeed={data?.hero.windSpeed ?? ""}
+                                    windDir={data?.hero.windDir ?? ""}
+                                    humidity={data?.hero.humidity ?? -1}
+                                    lastObs={ data?.hero.lastObs ?? '' }
                                 />
                             </View>
 
@@ -114,30 +114,23 @@ export default function CurrentWeatherScreen({
                                 <View style={styles.metricGrid}>
                                     <View style={styles.metricCol}>
                                         <MetricCard
-                                            label="Precipitación"
-                                            value="59%"
-                                            sub="Posibilidad de lluvia"
-                                            barValue={59}
+                                            values={ data?.metrics[0] }
                                         />
                                         <View style={{ height: 10 }} />
                                         <MetricCard
-                                            label="Viento"
-                                            value="6 mph"
-                                            sub="Dirección: Oeste"
+                                            values={data?.metrics[1]}
+                                        
                                         />
                                     </View>
                                     <View style={styles.metricCol}>
                                         <MetricCard
-                                            label="Humedad"
-                                            value="45%"
-                                            sub="Punto de rocío: 66°F"
-                                            barValue={45}
+                                            values={data?.metrics[2]}
+                                    
                                         />
                                         <View style={{ height: 10 }} />
                                         <MetricCard
-                                            label="Índice UV"
-                                            value="8"
-                                            sub="Muy alto"
+                                            values={data?.metrics[3]}
+                                          
                                         />
                                     </View>
                                 </View>

@@ -265,6 +265,9 @@ export function useCurrentWeather(
           dataSource: buildDataSource(bundle.location, bundle.forecast12h),
         };
 
+
+        console.log(screenData.metrics)
+
         setData(screenData);
       } catch (err) {
         if (id !== fetchIdRef.current) return;

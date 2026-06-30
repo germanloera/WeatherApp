@@ -1,33 +1,35 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/constants/ThemeProvider';
+import { MetricCardData } from '@/src';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 interface MetricCardProps {
-  label: string;
-  value: string;
-  sub?: string;
-  barValue?: number;
+  values?: MetricCardData,
   barColor?: string;
 }
 
-export function MetricCard({ label, value, sub, barValue, barColor }: MetricCardProps) {
+export function MetricCard({ values, barColor }: MetricCardProps) {
   const { theme } = useTheme();
-
+  console.log(values)
   return (
-    <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-      <Text style={[styles.label, { color: theme.colors.muted }]}>{label}</Text>
-      <Text style={[styles.value, { color: theme.colors.fg }]}>{value}</Text>
-      {sub && <Text style={[styles.sub, { color: theme.colors.muted }]}>{sub}</Text>}
-      {barValue !== undefined && (
-        <View style={[styles.barTrack, { backgroundColor: theme.colors.border }]}>
-          <View
-            style={[
-              styles.barFill,
-              { width: `${Math.min(barValue, 100)}%` as any, backgroundColor: barColor || theme.colors.accent },
-            ]}
-          />
-        </View>
-      )}
+    <View>
+
+      {values && <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+        <Text style={[styles.label, { color: theme.colors.muted }]}>{values?.label}</Text>
+        <Text style={[styles.value, { color: theme.colors.fg }]}>{values?.value}</Text>
+        {values?.sub && <Text style={[styles.sub, { color: theme.colors.muted }]}>{values?.sub}</Text>}
+        {values?.barValue !== undefined && (
+          <View style={[styles.barTrack, { backgroundColor: theme.colors.border }]}>
+            <View
+              style={[
+                styles.barFill,
+                { width: `${Math.min(values.barValue, 100)}%` as any, backgroundColor: barColor || theme.colors.accent },
+              ]}
+            />
+          </View>
+        )}
+      </View>}
+
     </View>
   );
 }

@@ -36,7 +36,7 @@ export function HeroWeatherCard({
       <View style={styles.tempRow}>
         <WeatherIcon condition={conditionIcon} size={52} color="#fff" />
         <Text style={styles.temp}>
-          {temperature}
+          {temperature.toFixed(0)}
           <Text style={styles.unit}>°{unit}</Text>
         </Text>
       </View>
