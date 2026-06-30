@@ -43,7 +43,7 @@ export default function CurrentWeatherScreen({
     const { theme, isDark, toggleDark } = useTheme();
     const [activeTab, setActiveTab] = useState('weather');
 
-    const { data, isLoading, error, refresh, isRefreshing } = useCurrentWeather(42.324268, -83.399017, "si")
+    const { data, isLoading, failed,  error, refresh, isRefreshing } = useCurrentWeather(42.324268, -83.399017, "si")
 
 
 
@@ -74,16 +74,16 @@ export default function CurrentWeatherScreen({
             <OfflineBanner visible={offline} />
             <View style={styles.content}>
                 <StateManager
-                    latency={latency}
-                    forceFail={forceFail}
+                    isLoading={ isLoading }
+                    forceFail={failed}
                     renderContent={() => (
                         <ScrollView
                             showsVerticalScrollIndicator={false}
                             contentContainerStyle={styles.scroll}
                         >
                             <Header
-                                greeting="viernes · 26 de junio"
-                                title="Washington, DC"
+                                greeting={ data?.header.greeting ?? ""}
+                                title={ data?.header.title ?? "" }
                                 isDark={isDark}
                                 onToggleDark={toggleDark}
                                 onSearch={handleSearch}

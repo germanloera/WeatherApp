@@ -220,6 +220,7 @@ export function useCurrentWeather(
 ): CurrentWeatherViewModel {
   const [data, setData] = useState<HomeScreenData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const fetchIdRef = useRef(0);
@@ -249,10 +250,14 @@ export function useCurrentWeather(
           throw new Error('No forecast periods available');
         }
 
+        const location = bundle.location.properties.relativeLocation.properties
+
+      
+
         const screenData: HomeScreenData = {
           header: {
             greeting: formatGreeting(bundle.forecast12h.generatedAt),
-            title: `${bundle.location.properties.relativeLocation.city}, ${bundle.location.properties.relativeLocation.state}`,
+            title: `${location.city}, ${location.state}`,
           },
           hero: buildHeroData(currentPeriod, bundle.latestObservation, unit === 'us' ? 'F' : 'C'),
           metrics: buildMetrics(currentPeriod, bundle.latestObservation),
@@ -266,7 +271,7 @@ export function useCurrentWeather(
         const message =
           err instanceof Error ? err.message : 'Failed to fetch weather data';
         setError(message);
-        p(err)
+        setFailed(true)
       } finally {
         if (id === fetchIdRef.current) {
           setIsLoading(false);
@@ -285,5 +290,5 @@ export function useCurrentWeather(
     fetchWeather(true);
   }, [fetchWeather]);
 
-  return { data, isLoading, error, refresh, isRefreshing };
+  return { data, isLoading, failed, error,  refresh, isRefreshing,  };
 }

@@ -116,6 +116,7 @@ export interface RelativeLocation {
   distance: QuantitativeValue;
   /** Compass bearing from the requested coordinate. */
   bearing: QuantitativeValue;
+  properties: RelativeLocation;
 }
 
 // ---------------------------------------------------------------------------

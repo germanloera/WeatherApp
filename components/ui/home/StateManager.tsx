@@ -8,7 +8,8 @@ type ScreenState = 'loading' | 'error' | 'content';
 
 interface StateManagerProps {
   /** Simulated latency in ms (dev only) */
-  latency?: number;
+  //latency?: number;
+  isLoading: boolean, 
   /** Force error state for testing */
   forceFail?: boolean;
   /** Content render function */
@@ -22,7 +23,8 @@ interface StateManagerProps {
 }
 
 export function StateManager({
-  latency = 1400,
+  isLoading = false,
+  //latency = 1400,
   forceFail = false,
   renderContent,
   errorTitle,
@@ -33,7 +35,7 @@ export function StateManager({
   const [retryKey, setRetryKey] = useState(0);
   const { theme } = useTheme();
 
-  const load = useCallback(() => {
+ /* const load = useCallback(() => {
     setState('loading');
     const fail = forceFail;
     setTimeout(() => {
@@ -48,13 +50,13 @@ export function StateManager({
 
   useEffect(() => {
     load();
-  }, [load, retryKey]);
+  }, [load, retryKey]); */
 
   const handleRetry = useCallback(() => {
     setRetryKey((k) => k + 1);
   }, []);
 
-  if (state === 'loading') {
+  if (isLoading) {
     return <LoadingSkeleton theme={theme} />;
   }
 
