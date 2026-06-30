@@ -12,7 +12,7 @@ http:
     - name: Content-Type
       value: undefined
     - name: User-Agent
-      value: (american_weather, gloera.adeve@gmail.com)
+      value: "{{userAgent}}"
     - name: Feature-Flags
       value: forecast_temperature_qv,forecast_wind_speed_qv
   params:
