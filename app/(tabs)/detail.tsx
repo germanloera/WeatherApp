@@ -10,6 +10,7 @@ import { SparklineChart } from '@/components/ui/details/SparklineChart';
 import { WindCard } from '@/components/ui/details/WindCard';
 import { SunTimesCard } from '@/components/ui/details/SunTimesCard';
 import { PressureCard } from '@/components/ui/details/PressureCard';
+import { useDetailWeather } from '@/src';
 
 interface DetailExtendedScreenProps {
   latency?: number;
@@ -29,6 +30,7 @@ export default function DetailExtendedScreen({
 }: DetailExtendedScreenProps) {
   const { theme, isDark, toggleDark } = useTheme();
   const [activeTab, setActiveTab] = useState('detail');
+  const { data, isLoading, failed, error, refresh, isRefreshing } = useDetailWeather()
 
   const handleTabPress = useCallback(
     (key: string) => {
@@ -44,8 +46,8 @@ export default function DetailExtendedScreen({
       <OfflineBanner visible={offline} />
       <View style={styles.content}>
         <StateManager
-          latency={latency}
-          forceFail={forceFail}
+          isLoading={ isLoading }
+          forceFail={failed}
           renderContent={() => (
             <ScrollView
               showsVerticalScrollIndicator={false}

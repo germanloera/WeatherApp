@@ -57,8 +57,8 @@ export interface CurrentWeatherBundle {
 }
 
 export interface DetailWeatherBundle {
-  location: PointGeoJson;
-  gridData: Gridpoint;
+ // location: PointGeoJson;
+  gridData: Gridpoint | null;
   latestObservation: Observation | null;
   activeAlerts: AlertCollectionGeoJson | null;
 }
@@ -181,13 +181,15 @@ export class WeatherService {
    */
   async getDetailWeather(
     lat: number,
-    lon: number,
+    lon: number, 
+    gridX: number,
+    gridY: number,
+    gridId: string,
   ): Promise<DetailWeatherBundle> {
-    const location = await this.resolveLocation(lat, lon);
-    const { gridId, gridX, gridY } = location.properties;
+  
 
-    const [gridData, activeAlerts] = await Promise.all([
-      this.gridpointsApi.getGridData(gridId, gridX, gridY),
+    const [ activeAlerts] = await Promise.all([
+     // this.gridpointsApi.getGridData(gridId, gridX, gridY),
      // this.observationsApi
      ///   .getLatestObservation(location.nearestStationId)
      //   .catch(() => null),
@@ -197,8 +199,8 @@ export class WeatherService {
     ]);
 
     return {
-      location,
-      gridData: gridData.properties,
+      //location,
+      gridData: null,
       latestObservation:  null,
       activeAlerts,
     };

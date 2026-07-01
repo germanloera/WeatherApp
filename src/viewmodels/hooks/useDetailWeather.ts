@@ -12,18 +12,19 @@
 //   const { data, isLoading, error, refresh } = useDetailWeather(38.88, -77.03);
 // ---------------------------------------------------------------------------
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { p, useCurrentLocationStore } from '@/src/constants/debug';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { Gridpoint, Observation } from '../api/types/models';
 import { weatherService } from '../services/weatherService';
 import type {
-  DetailScreenData,
   DetailMetricData,
-  TemperatureTrendData,
-  WindData,
-  SunTimesData,
+  DetailScreenData,
   PressureData,
   PressureTrend,
+  SunTimesData,
+  TemperatureTrendData,
+  WindData,
 } from '../types/ui';
-import type { Gridpoint, Observation } from '../api/types/models';
 
 // =========================================================================
 // View-model return type
@@ -35,6 +36,7 @@ export interface DetailWeatherViewModel {
   error: string | null;
   refresh: () => void;
   isRefreshing: boolean;
+  failed: boolean;
 }
 
 // =========================================================================
@@ -109,8 +111,8 @@ function buildMetrics(obs: Observation | null): DetailMetricData[] {
         visibilityVal != null && visibilityVal >= 10
           ? 'Unrestricted'
           : visibilityVal != null
-          ? 'Reduced visibility'
-          : undefined,
+            ? 'Reduced visibility'
+            : undefined,
     },
     {
       label: 'Dew Point',
@@ -172,7 +174,7 @@ function buildWindData(obs: Observation | null): WindData {
 
   // Convert degrees to compass direction name.
   const dirNames = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
-                    'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+    'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
   const index = Math.round(degrees / 22.5) % 16;
   const direction = dirNames[index] ?? 'N';
 
@@ -273,8 +275,8 @@ function buildPressureData(gridData: Gridpoint): PressureData {
     trend === 'rising'
       ? 'Pressure is rising, indicating improving weather conditions.'
       : trend === 'falling'
-      ? 'Pressure is falling, suggesting an approaching storm system.'
-      : 'Pressure is stable. No significant short-term changes expected.';
+        ? 'Pressure is falling, suggesting an approaching storm system.'
+        : 'Pressure is stable. No significant short-term changes expected.';
 
   return {
     current: Math.round(currentValue * 10) / 10,
@@ -289,14 +291,18 @@ function buildPressureData(gridData: Gridpoint): PressureData {
 // Hook
 // =========================================================================
 
-export function useDetailWeather(
-  lat: number,
-  lon: number,
-): DetailWeatherViewModel {
+export function useDetailWeather(): DetailWeatherViewModel {
   const [data, setData] = useState<DetailScreenData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [failed, setFailed] = useState(false)
+  const gridX = useCurrentLocationStore((state) => state.pointX)
+  const gridY = useCurrentLocationStore((state) => state.pointY)
+  const lat = useCurrentLocationStore((state) => state.lat)
+  const long = useCurrentLocationStore((state) => state.long)
+  const wfo = useCurrentLocationStore((state) => state.wfo)
+
   const fetchIdRef = useRef(0);
 
   const fetchWeather = useCallback(
@@ -308,8 +314,11 @@ export function useDetailWeather(
       setError(null);
 
       try {
-        const bundle = await weatherService.getDetailWeather(lat, lon);
+        const bundle = await weatherService.getDetailWeather(lat, long, gridX, gridY, wfo);
         if (id !== fetchIdRef.current) return;
+
+        p(bundle)
+
 
         const screenData: DetailScreenData = {
           header: {
@@ -325,14 +334,16 @@ export function useDetailWeather(
             station: `${bundle.location.nearestStation.name} (${bundle.location.nearestStationId})`,
             updated: bundle.gridData.updateTime
               ? new Date(bundle.gridData.updateTime).toLocaleString('en-US', {
-                  day: '2-digit',
-                  month: 'short',
-                  year: 'numeric',
-                })
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+              })
               : 'N/A',
             source: 'weather.gov',
           },
         };
+
+        p(screenData)
 
         setData(screenData);
       } catch (err) {
@@ -347,7 +358,7 @@ export function useDetailWeather(
         }
       }
     },
-    [lat, lon],
+    [lat, long],
   );
 
   useEffect(() => {
@@ -358,5 +369,5 @@ export function useDetailWeather(
     fetchWeather(true);
   }, [fetchWeather]);
 
-  return { data, isLoading, error, refresh, isRefreshing };
+  return { data, isLoading, failed, error, refresh, isRefreshing };
 }

@@ -226,7 +226,8 @@ export function useCurrentWeather(
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const fetchIdRef = useRef(0);
-
+  const setLat = useCurrentLocationStore((state) => state.setLat);
+  const setLong = useCurrentLocationStore((state) => state.setLong);
   const setX = useCurrentLocationStore((state) => state.setX);
   const setY = useCurrentLocationStore((state) => state.setY);
   const setWFO = useCurrentLocationStore((state) => state.setWFO);
@@ -261,6 +262,9 @@ export function useCurrentWeather(
         setX(bundle.location.properties.gridX)
         setY(bundle.location.properties.gridY)
         setWFO(bundle.location.properties.gridId)
+        setLat(lat)
+        setLong(lon)
+
 
 
 

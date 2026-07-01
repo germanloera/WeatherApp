@@ -193,8 +193,7 @@ setFailed(false)
             source: 'weather.gov',
           },
         };
-
-        p(data?.days)
+        
         setData(screenData);
       } catch (err) {
         if (id !== fetchIdRef.current) return;
