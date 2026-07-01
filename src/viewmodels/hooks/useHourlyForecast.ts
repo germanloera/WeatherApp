@@ -13,6 +13,7 @@ import { weatherService } from '../services/weatherService';
 import type { HourlyScreenData, DayGroup, HourlyRowData, DataSourceData } from '../types/ui';
 import type { WeatherCondition } from '../../../components/ui/home/WeatherIcon';
 import type { GridpointHourlyForecastPeriod } from '../api/types/models';
+import { p, useCurrentLocationStore } from '@/src/constants/debug';
 
 // =========================================================================
 // View-model return type
@@ -147,8 +148,6 @@ function groupByDay(
 // =========================================================================
 
 export function useHourlyForecast(
-  lat: number,
-  lon: number,
   unit: 'us' | 'si' = 'us',
 ): HourlyForecastViewModel {
   const [data, setData] = useState<HourlyScreenData | null>(null);
@@ -156,6 +155,9 @@ export function useHourlyForecast(
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const fetchIdRef = useRef(0);
+  const gridX = useCurrentLocationStore((state) => state.pointX)
+  const gridY = useCurrentLocationStore((state) => state.pointY)
+  const wfo = useCurrentLocationStore((state) => state.wfo)
 
   const fetchWeather = useCallback(
     async (isRefresh = false) => {
@@ -166,7 +168,7 @@ export function useHourlyForecast(
       setError(null);
 
       try {
-        const bundle = await weatherService.getHourlyForecast(lat, lon, unit);
+        const bundle = await weatherService.getHourlyForecast(gridX, gridY, wfo,   unit);
         if (id !== fetchIdRef.current) return;
 
         const periods = bundle.forecastHourly.periods;
@@ -178,7 +180,7 @@ export function useHourlyForecast(
           },
           days: groupByDay(periods),
           dataSource: {
-            station: `weather.gov · ${bundle.location.point.relativeLocation.city}`,
+            station: `weather.gov `,
             updated: new Date(bundle.forecastHourly.generatedAt).toLocaleString('en-US', {
               day: '2-digit',
               month: 'short',
@@ -190,6 +192,7 @@ export function useHourlyForecast(
           },
         };
 
+        p(data?.days)
         setData(screenData);
       } catch (err) {
         if (id !== fetchIdRef.current) return;
@@ -203,7 +206,7 @@ export function useHourlyForecast(
         }
       }
     },
-    [lat, lon, unit],
+    [ unit],
   );
 
   useEffect(() => {

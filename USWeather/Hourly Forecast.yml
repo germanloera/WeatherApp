@@ -1,0 +1,28 @@
+info:
+  name: Hourly Forecast
+  type: http
+  seq: 6
+
+http:
+  method: GET
+  url: https://api.weather.gov/gridpoints/DTX/54,33/forecast/hourly?units=us
+  headers:
+    - name: Accept
+      value: application/geo+json
+    - name: Content-Type
+      value: undefined
+    - name: User-Agent
+      value: (american_weather, gloera.adeve@gmail.com)
+    - name: Feature-Flags
+      value: forecast_temperature_qv,forecast_wind_speed_qv
+  params:
+    - name: units
+      value: us
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

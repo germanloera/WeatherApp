@@ -105,7 +105,7 @@ export class GridpointsApi {
       this.gridPath(wfo, gridX, gridY, '/forecast'),
       { params: units ? { units } : undefined },
     );
-    p(data)
+  
     return data;
   }
 

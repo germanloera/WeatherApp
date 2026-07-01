@@ -1,13 +1,14 @@
-import React, { useState, useCallback } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
-import { useTheme } from '@/constants/ThemeProvider';
+import { DataSourceCard } from '@/components/ui/home/DataSourceCard';
+import { Header } from '@/components/ui/home/Header';
 import { OfflineBanner } from '@/components/ui/home/OfflineBanner';
 import { StateManager } from '@/components/ui/home/StateManager';
-import { Header } from '@/components/ui/home/Header';
-import { DataSourceCard } from '@/components/ui/home/DataSourceCard';
+import type { WeatherCondition } from '@/components/ui/home/WeatherIcon';
 import { DayDivider } from '@/components/ui/hourly/DayDivider';
 import { HourRow } from '@/components/ui/hourly/HourRow';
-import type { WeatherCondition } from '@/components/ui/home/WeatherIcon';
+import { useTheme } from '@/constants/ThemeProvider';
+import { useHourlyForecast } from '@/src';
+import React, { useCallback, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 interface HourData {
   time: string;
@@ -76,6 +77,8 @@ export default function HourlyScreen({
 }: HourlyScreenProps) {
   const { theme, isDark, toggleDark } = useTheme();
   const [activeTab, setActiveTab] = useState('hours');
+  const { data, isLoading, failed, error, refresh, isRefreshing } = useHourlyForecast()
+
 
   const handleTabPress = useCallback(
     (key: string) => {
@@ -91,31 +94,31 @@ export default function HourlyScreen({
 
   return (
     <View style={[styles.screen, { backgroundColor: theme.colors.bg }]}>
-    
+
       <OfflineBanner visible={offline} />
       <View style={styles.content}>
         <StateManager
-          latency={latency}
-          forceFail={forceFail}
+          isLoading={isLoading}
+          forceFail={failed}
           renderContent={() => (
             <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scroll}
             >
               <Header
-                greeting="viernes 26 jun · sáb 27 jun"
-                title="Próximas 48 horas"
+                greeting={data?.header.greeting ?? ""}
+                title={data?.header.title ?? ''}
                 isDark={isDark}
                 onToggleDark={toggleDark}
                 onSearch={handleSearch}
               />
 
-              {DAYS.map((day, di) => (
-                <React.Fragment key={di}>
-                  <DayDivider label={day.label} />
+              {data?.days.map((group, idx) => (
+                <React.Fragment key={idx}>
+                  <DayDivider label={group.label} />
                   <View style={styles.listPad}>
-                    {day.hours.map((hour, hi) => (
-                      <HourRow key={`${di}-${hi}`} {...hour} />
+                    {group.hours.map((hour, hi) => (
+                      <HourRow key={`${idx}-${hi}`} {...hour} />
                     ))}
                   </View>
                 </React.Fragment>

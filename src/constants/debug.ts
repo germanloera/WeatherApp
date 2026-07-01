@@ -1,6 +1,27 @@
 import { create } from 'zustand';
 
-export const useCurrentLocationStore = create((set) => ({
+interface CurrentLocation { 
+
+    pointX: number,
+    pointY: number,
+    lat: number,
+    long: number,
+    wfo: string,
+
+    setX: (x: number) => void,
+    setY: (y: number) => void,
+    setLat: (lat: number) => void,
+    setLong: (long: number) => void,
+    setWFO: (wf: string) => void,
+
+}
+
+
+
+
+
+
+export const useCurrentLocationStore = create<CurrentLocation>((set) => ({
     pointX: 0,
     pointY: 0,
     lat: 0,

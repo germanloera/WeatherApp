@@ -18,15 +18,8 @@
 //   return <HomeScreen data={data} />;
 // ---------------------------------------------------------------------------
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { weatherService, type ResolvedLocation } from '../services/weatherService';
-import type {
-  HomeScreenData,
-  HeroWeatherData,
-  MetricCardData,
-  HourlyStripItem,
-  DataSourceData,
-} from '../types/ui';
+import { useCurrentLocationStore } from '@/src/constants/debug';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { WeatherCondition } from '../../../components/ui/home/WeatherIcon';
 import type {
   Gridpoint12hForecast,
@@ -35,7 +28,14 @@ import type {
   PointGeoJson,
   TemperatureUnit,
 } from '../../api/types';
-import { p } from '@/src/constants/debug';
+import { weatherService } from '../services/weatherService';
+import type {
+  DataSourceData,
+  HeroWeatherData,
+  HomeScreenData,
+  HourlyStripItem,
+  MetricCardData,
+} from '../types/ui';
 
 // =========================================================================
 // View-model return type
@@ -225,6 +225,11 @@ export function useCurrentWeather(
   const [isRefreshing, setIsRefreshing] = useState(false);
   const fetchIdRef = useRef(0);
 
+  const setX = useCurrentLocationStore((state) => state.setX);
+  const setY = useCurrentLocationStore((state) => state.setY);
+  const setWFO = useCurrentLocationStore((state) => state.setWFO);
+
+
   const fetchWeather = useCallback(
     async (isRefresh = false) => {
       const id = ++fetchIdRef.current;
@@ -238,9 +243,7 @@ export function useCurrentWeather(
 
       try {
         const bundle = await weatherService.getCurrentWeather(lat, lon, unit);
-       
-        
-          p(bundle)
+
 
         // Guard against stale responses from rapid re-fetches.
         if (id !== fetchIdRef.current) return;
@@ -252,7 +255,12 @@ export function useCurrentWeather(
 
         const location = bundle.location.properties.relativeLocation.properties
 
-      
+
+        setX(bundle.location.properties.gridX)
+        setY(bundle.location.properties.gridY)
+        setWFO(bundle.location.properties.gridId)
+
+
 
         const screenData: HomeScreenData = {
           header: {
@@ -265,8 +273,6 @@ export function useCurrentWeather(
           dataSource: buildDataSource(bundle.location, bundle.forecast12h),
         };
 
-
-        console.log(screenData.metrics)
 
         setData(screenData);
       } catch (err) {
@@ -293,5 +299,5 @@ export function useCurrentWeather(
     fetchWeather(true);
   }, [fetchWeather]);
 
-  return { data, isLoading, failed, error,  refresh, isRefreshing,  };
+  return { data, isLoading, failed, error, refresh, isRefreshing, };
 }

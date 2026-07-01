@@ -28,7 +28,7 @@ export function HourRow({ time, condition, conditionText, subtitle, temp, precip
         </Text>
       </View>
       <View style={styles.tempWrap}>
-        <Text style={[styles.temp, { color: theme.colors.fg }]}>{temp}</Text>
+        <Text style={[styles.temp, { color: theme.colors.fg }]}>{temp.substring(0, 2)}°</Text>
         {precip && (
           <Text style={[styles.precip, { color: theme.colors.accent }]}>{precip}</Text>
         )}

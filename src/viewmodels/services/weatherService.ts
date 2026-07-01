@@ -64,7 +64,7 @@ export interface DetailWeatherBundle {
 }
 
 export interface HourlyForecastBundle {
-  location: PointGeoJson;
+ // location: PointGeoJson;
   forecastHourly: GridpointHourlyForecast;
 }
 
@@ -156,7 +156,7 @@ export class WeatherService {
           .catch(() => null), // alerts are optional
       ]);
 
-    p(forecast12h)
+  
     return {
      location,
       forecast12h: forecast12h.properties,
@@ -216,12 +216,13 @@ export class WeatherService {
    *   hourly.forecastHourly.periods.length // ~168 (7 days × 24 h)
    */
   async getHourlyForecast(
-    lat: number,
-    lon: number,
+    gridX: number,
+    gridY: number,
+    gridId: string, 
     units: 'us' | 'si' = 'us',
   ): Promise<HourlyForecastBundle> {
-    const location = await this.resolveLocation(lat, lon);
-    const { gridId, gridX, gridY } = location.properties;
+   //const location = await this.resolveLocation(lat, lon);
+   // const { gridId, gridX, gridY } = location.properties;
 
     const forecastHourly = await this.gridpointsApi.getHourlyForecast(
       gridId,
@@ -231,7 +232,6 @@ export class WeatherService {
     );
 
     return {
-      location,
       forecastHourly: forecastHourly.properties,
     };
   }

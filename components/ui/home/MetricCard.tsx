@@ -10,7 +10,7 @@ interface MetricCardProps {
 
 export function MetricCard({ values, barColor }: MetricCardProps) {
   const { theme } = useTheme();
-  console.log(values)
+
   return (
     <View>
 
