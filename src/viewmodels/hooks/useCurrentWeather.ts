@@ -52,6 +52,8 @@ export interface CurrentWeatherViewModel {
   refresh: () => void;
   /** Whether a background refresh is currently happening. */
   isRefreshing: boolean;
+
+  failed: boolean;
 }
 
 // =========================================================================

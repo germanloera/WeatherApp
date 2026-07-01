@@ -25,6 +25,7 @@ export interface HourlyForecastViewModel {
   error: string | null;
   refresh: () => void;
   isRefreshing: boolean;
+  failed: boolean;
 }
 
 // =========================================================================
@@ -154,6 +155,7 @@ export function useHourlyForecast(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [failed, setFailed] = useState(false);
   const fetchIdRef = useRef(0);
   const gridX = useCurrentLocationStore((state) => state.pointX)
   const gridY = useCurrentLocationStore((state) => state.pointY)
@@ -166,7 +168,7 @@ export function useHourlyForecast(
       if (isRefresh) setIsRefreshing(true);
       else setIsLoading(true);
       setError(null);
-
+setFailed(false)
       try {
         const bundle = await weatherService.getHourlyForecast(gridX, gridY, wfo,   unit);
         if (id !== fetchIdRef.current) return;
@@ -199,6 +201,7 @@ export function useHourlyForecast(
         const message =
           err instanceof Error ? err.message : 'Failed to fetch hourly forecast';
         setError(message);
+        setFailed(true)
       } finally {
         if (id === fetchIdRef.current) {
           setIsLoading(false);
@@ -217,6 +220,6 @@ export function useHourlyForecast(
     fetchWeather(true);
   }, [fetchWeather]);
 
-  return { data, isLoading, error, refresh, isRefreshing };
+  return { data, isLoading, failed,  error, refresh, isRefreshing };
 }
 
