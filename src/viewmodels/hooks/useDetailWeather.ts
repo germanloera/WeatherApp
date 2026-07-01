@@ -14,7 +14,7 @@
 
 import { p, useCurrentLocationStore } from '@/src/constants/debug';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Gridpoint, Observation } from '../api/types/models';
+import type { Gridpoint, Observation } from '../../api/types/models';
 import { weatherService } from '../services/weatherService';
 import type {
   DetailMetricData,
