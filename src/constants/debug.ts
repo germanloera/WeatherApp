@@ -16,11 +16,6 @@ interface CurrentLocation {
 
 }
 
-
-
-
-
-
 export const useCurrentLocationStore = create<CurrentLocation>((set) => ({
     pointX: 0,
     pointY: 0,
