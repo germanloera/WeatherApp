@@ -25,6 +25,7 @@ import axios, {
 import type { ProblemDetail } from '../types/models';
 
 import curlirize from 'axios-curlirize'
+import { log } from '@/src/constants/debug';
 
 
 // ---------------------------------------------------------------------------
@@ -147,7 +148,24 @@ export function createHttpClient(
     },
   );
 
-  curlirize(client)
+  curlirize(client, (result, err) => {
+    const { command } = result;
+
+    if (err) {
+      // Route errors to a separate file, stream, or logging tool
+      console.log()
+      console.error(err);
+      console.log()
+
+    } else {
+     // Route the generated curl command to your custom log stream 
+        log(command);
+     
+      
+    }
+  });
+
+
   return client;
 }
 

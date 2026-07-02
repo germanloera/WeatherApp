@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-interface CurrentLocation { 
+interface CurrentLocation {
 
     pointX: number,
     pointY: number,
@@ -33,10 +33,26 @@ export const useCurrentLocationStore = create<CurrentLocation>((set) => ({
     setLat: (lat) => set({ lat: lat }),
     setLong: (long) => set({ long: long }),
     setWFO: (wfo) => set({ wfo: wfo }),
-    
+
 }))
 
 
-export function p(text: any) { 
-    console.log(text)
+
+export function log(text: any) {
+
+    console.log()
+    console.log(text);
+    console.log()
+
+}
+export function err(err: any) {
+
+    console.log()
+    console.error(err);
+    console.log()
+
+}
+
+export function p(text: any) {
+    log(text)
 }

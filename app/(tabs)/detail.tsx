@@ -54,8 +54,8 @@ export default function DetailExtendedScreen({
               contentContainerStyle={styles.scroll}
             >
               <Header
-                greeting="Washington, DC"
-                title="Detalle extendido"
+                greeting={ data?.header.subtitle ?? 'Subtitle' }
+                title={ data?.header.title ?? 'Gretting'}
                 isDark={isDark}
                 onToggleDark={toggleDark}
               />
@@ -63,18 +63,11 @@ export default function DetailExtendedScreen({
               <View style={styles.section}>
                 <View style={styles.metricGrid}>
                   <View style={styles.metricCol}>
-                    <DetailCard
-                      label="Presión barométrica"
-                      value={<><Text style={styles.numValue}>1013.2</Text> <Text style={[styles.unitValue, { color: theme.colors.muted }]}>hPa</Text></>}
-                      sub="Estable ↑"
-                    />
+                    <DetailCard data={ data?.metrics[0] }/>
                   </View>
                   <View style={styles.metricCol}>
                     <DetailCard
-                      label="Índice UV"
-                      value={<><Text style={styles.numValue}>8</Text><Text style={[styles.unitValue, { color: theme.colors.muted }]}> /11</Text></>}
-                      sub="Muy alto"
-                      subColor={theme.colors.error}
+                      data={data?.metrics[1]}
                     >
                       <View style={[styles.qualBar, { backgroundColor: theme.colors.border }]}>
                         <View style={[styles.qualFill, { width: '73%', backgroundColor: theme.colors.error }]} />
@@ -83,16 +76,12 @@ export default function DetailExtendedScreen({
                   </View>
                   <View style={styles.metricCol}>
                     <DetailCard
-                      label="Visibilidad"
-                      value={<><Text style={styles.numValue}>10</Text> <Text style={[styles.unitValue, { color: theme.colors.muted }]}>mi</Text></>}
-                      sub="Sin restricciones"
+                      data={data?.metrics[2]}
                     />
                   </View>
                   <View style={styles.metricCol}>
                     <DetailCard
-                      label="Punto de rocío"
-                      value={<><Text style={styles.numValue}>66</Text><Text style={[styles.unitValue, { color: theme.colors.muted }]}>°F</Text></>}
-                      sub="Humedad: 45%"
+                      data={data?.metrics[3]}
                     />
                   </View>
                 </View>

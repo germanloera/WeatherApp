@@ -1,24 +1,24 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/constants/ThemeProvider';
+import { DetailMetricData } from '@/src';
 
 interface DetailCardProps {
-  label: string;
-  value: React.ReactNode;
-  sub?: string;
+  data?: DetailMetricData ;
   subColor?: string;
   children?: React.ReactNode;
+
 }
 
-export function DetailCard({ label, value, sub, subColor, children }: DetailCardProps) {
+export function DetailCard({ data, subColor, children }: DetailCardProps) {
   const { theme } = useTheme();
 
   return (
     <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-      <Text style={[styles.label, { color: theme.colors.muted }]}>{label}</Text>
-      <Text style={[styles.value, { color: theme.colors.fg }]}>{value}</Text>
-      {sub && (
-        <Text style={[styles.sub, { color: subColor || theme.colors.muted }]}>{sub}</Text>
+      <Text style={[styles.label, { color: theme.colors.muted }]}>{data?.label}</Text>
+      <Text style={[styles.value, { color: theme.colors.fg }]}>{data?.value}</Text>
+      {data?.sub && (
+        <Text style={[styles.sub, { color: subColor || theme.colors.muted }]}>{data?.sub}</Text>
       )}
       {children}
     </View>
