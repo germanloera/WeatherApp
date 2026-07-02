@@ -159,7 +159,7 @@ export function createHttpClient(
 
     } else {
      // Route the generated curl command to your custom log stream 
-        log(command);
+          log(command);
      
       
     }
